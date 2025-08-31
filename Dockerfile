@@ -1,4 +1,6 @@
-FROM debian:bullseye
+ARG OS_RELEASE=bullseye
+FROM --platform=$BUILDPLATFORM debian:${OS_RELEASE}
+ARG TARGETPLATFORM
 
 WORKDIR /opt/z-way-server
 
@@ -14,13 +16,19 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install z-way-server
-RUN wget -q -O - https://storage.z-wave.me/Z-Way-Install | bash -e && \
+# Workaround for expired GPG key
+RUN wget -q -O install.sh https://storage.z-wave.me/Z-Way-Install && \
+    sed -i 's|deb \${arch_tag}|deb [trusted=yes \${arch_tag//[^0-9A-Za-z=]/}]|g' install.sh
+
+# Restore this line once the GPG key is fixed
+#RUN wget -q -O - https://storage.z-wave.me/Z-Way-Install | bash -e && \
+RUN cat install.sh | bash -e && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN rm -f /opt/z-way-server/automation/storage/*
 
 # Unblock zbw
 RUN rm /etc/zbw/flags/no_connection
-RUN echo "zbox" > /etc/z-way/box_type
+RUN mkdir -p /etc/z-way && echo "zbox" > /etc/z-way/box_type
 
 COPY rootfs/ /
 
