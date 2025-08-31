@@ -48,8 +48,8 @@ jobs:
         platforms: linux/amd64,linux/arm64,linux/arm/v7
         build-args: |
           OS_RELEASE=${{ matrix.release }}
-        push: ${{ env.PUSH_IMAGE }}
+        #push: ${{ env.PUSH_IMAGE }}
         tags: |
-          ${{ matrix.is_primary && github.repository }}
+          ${{ matrix.is_primary && github.repository || '' }}
           ${{ format('{0}:{1}', github.repository, matrix.release) }}
           ${{ format('{0}:{1}-{2}', github.repository, matrix.release, env.IMAGE_VERSION) }}
