@@ -51,6 +51,8 @@ jobs:
         build-args: |
           OS_RELEASE=${{ matrix.release }}
         push: true
+        provenance: false
+        sbom: false
         tags: |
           ${{ github.event_name == 'release' && matrix.is_primary && format('ghcr.io/{0}:latest', github.repository) || '' }}
           ${{ github.event_name == 'release' && format('ghcr.io/{0}:{1}', github.repository, matrix.release) || '' }}
