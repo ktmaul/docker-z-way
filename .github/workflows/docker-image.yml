@@ -18,11 +18,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [bullseye, bookworm]
+        release: 
+        - bullseye
+        # - bookworm Removed because of a dependency on openssl1.1
         include:
-          - is_primary: false
-          - release: bookworm
-            is_primary: true
+        - is_primary: false
+        - release: bullseye
+          is_primary: true
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -50,7 +52,7 @@ jobs:
         platforms: linux/amd64,linux/arm64,linux/arm/v7
         build-args: |
           OS_RELEASE=${{ matrix.release }}
-        push: true
+        push: ${{ env.PUSH_IMAGE }}
         provenance: false
         sbom: false
         tags: |
