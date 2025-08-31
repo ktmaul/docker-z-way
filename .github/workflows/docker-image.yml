@@ -27,8 +27,6 @@ jobs:
     permissions:
       packages: write
       contents: read
-    env:
-      MATRIX_TAG: ${{ format('{0}', matrix.release) }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up QEMU
@@ -41,6 +39,10 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Normalize Image version
+      run: |
+        value=${{ env.IMAGE_VERSION }}
+        echo "IMAGE_VERSION=${value//[^0-9A-Za-z\-\.]/-}" >> "$GITHUB_ENV"
     - name: Build and Push the Image
       uses: docker/build-push-action@v6
       with:
