@@ -18,11 +18,11 @@ RUN apt-get update && \
 # Install z-way-server
 # Workaround for expired GPG key
 RUN wget -q -O install.sh https://storage.z-wave.me/Z-Way-Install && \
-    sed -i 's/deb \${arch_tag}/deb [trusted=yes] \${arch_tag}/g' install.sh
+    sed -i 's|deb \${arch_tag}|deb [trusted=yes \${arch_tag//[^0-9A-Za-z=]/}]|g' install.sh
 
 # Restore this line once the GPG key is fixed
 #RUN wget -q -O - https://storage.z-wave.me/Z-Way-Install | bash -e && \
-RUN cat install.sh | bash -e || \
+RUN cat install.sh | bash -e && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN rm -f /opt/z-way-server/automation/storage/*
 
